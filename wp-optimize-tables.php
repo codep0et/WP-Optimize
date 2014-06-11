@@ -58,7 +58,10 @@ echo "'";
 	$data_usage = 0;
 	$index_usage = 0;
 	$overhead_usage = 0;
-	$tablesstatus = $wpdb->get_results("SHOW TABLE STATUS");
+	$prefix = $wpdb->prefix . '_%';
+	$DB = DB_NAME;
+	$tablesstatus = $wpdb->get_results("SELECT table_name,Engine,table_rows,Data_length,Max_data_length,Index_length,Data_free FROM information_schema.tables WHERE table_schema = '$DB' AND table_name LIKE '$prefix'");
+
 	foreach($tablesstatus as  $tablestatus) {
 		if($no%2 == 0) {
 			$style = '';
@@ -68,7 +71,7 @@ echo "'";
 		$no++;
 		echo "<tr$style>\n";
 		echo '<td>'.number_format_i18n($no).'</td>'."\n";
-		echo "<td>$tablestatus->Name</td>\n";
+		echo "<td>$tablestatus->table_name</td>\n";
 		echo '<td>'.number_format_i18n($tablestatus->Rows).'</td>'."\n";
 		echo '<td>'.wpo_format_size($tablestatus->Data_length).'</td>'."\n";
 		echo '<td>'.wpo_format_size($tablestatus->Index_length).'</td>'."\n";;		
